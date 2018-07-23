@@ -109,13 +109,6 @@ exports.start = function(options) {
         });
         Client.config = options
         Client.login(options.token).then(async () => {
-            try {
-                var application = await Client.fetchApplication()
-                Client.config.ownerID = application.owner.id
-            } catch (e) {
-                console.log(e)
-                throw Error("Couldn't fetch application, token may be a invalid / user token. ")
-            }
             Client.guilds.forEach(i => {
                 i.customConfig = new exports.CustomConfig(Client, i.id);
                 Client.customConfig.set(i.id, i.customConfig)
