@@ -13,7 +13,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 8) {
 */
 exports.version = require("./package.json").version;
 exports.DataStore = require("./src/dataStore.js")
-exports.methods = {RichEmbed: discord.RichEmbed}
+exports.methods = {RichEmbed: discord.MessageEmbed, MessageEmbed: discord.MessageEmbed}
 exports.CustomConfig = require("./src/CustomConfig.js")
 exports.command = function(name, options) {
     const Command = require("./src/module_classes/Command.js")()
