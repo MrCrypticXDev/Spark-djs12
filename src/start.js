@@ -72,6 +72,12 @@ async function observer(client, message, command) {
     var results = null;
     var {ignoreBots} = client.config
     if (message.channel.type == "text") {
+        
+        if(!message.guild.customConfig) {
+            message.guild.customConfig = new client.CustomConfig()
+            client.customConfig.set(message.guild.id, message.guild.customConfig)
+        }
+        
         if (message.guild.customConfig.ignoreBots) {
             ignoreBots = message.guild.customConfig;
         }
