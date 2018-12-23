@@ -15,13 +15,13 @@ module.exports = (options) => {
     }
     if (typeof options.prefix == "string") {
         if (options.prefix.includes(" ")) {
-            //return console.log(`You are trying to start without ${chalk.red("a valid prefix")}.\nPlease read this article:\n${chalk.blue("https://discordspark.com/documentation/intro")}`)
+            return console.log(`You are trying to start without ${chalk.red("a valid prefix")}.\nPlease read this article:\n${chalk.blue("https://discordspark.com/documentation/intro")}`)
         }
         options.prefix = [options.prefix]
     } else if (options.prefix instanceof Array) {
         options.prefix.forEach(i => {
             if (i.includes(" ")) {
-              //return console.log(`You are trying to start without ${chalk.red("a valid prefix")}.\nPlease read this article:\n${chalk.blue("https://discordspark.com/documentation/intro")}`)
+              return console.log(`You are trying to start without ${chalk.red("a valid prefix")}.\nPlease read this article:\n${chalk.blue("https://discordspark.com/documentation/intro")}`)
             }
         })
     } else {
