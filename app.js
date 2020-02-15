@@ -116,7 +116,7 @@ exports.start = function(options) {
                 console.log(e)
                 throw Error("Couldn't fetch application, token may be a invalid / user token. ")
             }
-            Client.guilds.forEach(i => {
+            Client.guilds.cache.forEach(i => {
                 i.customConfig = new exports.CustomConfig(Client, i.id);
                 Client.customConfig.set(i.id, i.customConfig)
             })

@@ -19,8 +19,8 @@ Command.code = async (client, message) => {
         embed.setDescription(`Hello, I am ${client.user.tag}. I am owned and maintained by <@${client.config.ownerID}>, created with the Discord.JS framework known as **Spark**.\n\n` +
             "Spark is a powerful modular framework that makes creating Discord bots easy.")
         embed.addField("Prefix(es):", prefixText, true)
-        embed.addField("Servers:", client.guilds.size, true)
-        embed.addField("Users:", client.users.size, true)
+        embed.addField("Servers:", client.guilds.cache.size, true)
+        embed.addField("Users:", client.users.cache.size, true)
         embed.addField("Memory Usage:", `${v} MB`, false)
         embed.addField("Spark Version:", Spark.version, false)
         embed.addField("More Information:", "Feel free to visit our [website](https://discordspark.com) or our discord [server](https://discord.gg/TezD2Zg) for more information about the Spark Framework.", false)
@@ -36,8 +36,8 @@ Command.code = async (client, message) => {
         // "My ping is: {bot_latency}ms.\n"+
         `I am running on version \`${Spark.version}\` of spark.\n\n` +
         "__Statistics__\n" +
-        `I am currently in \`${client.guilds.size}\` servers.\n` +
-        `I am being used by \`${client.users.size}\` users.\n` +
+        `I am currently in \`${client.guilds.cache.size}\` servers.\n` +
+        `I am being used by \`${client.users.cache.size}\` users.\n` +
         `I am using \`${v}\` MB of memory.\n\n` +
         "For more information about the **Spark** framework visit https://discord.gg/TezD2Zg or the website https://discordspark.com")
 
