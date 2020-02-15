@@ -99,7 +99,7 @@ exports.start = function(options) {
                 var eventtext = colours(`${this.dataStore.events.size} events\n`, this.dataStore.events.size)
                 startBot(this)
 
-                console.log(`Your bot (${chalk.yellow(this.user.tag)}) is now ${chalk.green("online!")} | Running on ${this.guilds.size} servers | ${chalk.yellow(`Spark v${this.version}`)}\nWe detected the following data:\n \n ${commandtext} ${observertext} ${enginetext} ${snippettext} ${permissiontext} ${eventtext}`)
+                console.log(`Your bot (${chalk.yellow(this.user.tag)}) is now ${chalk.green("online!")} | Running on ${this.guilds.cache.size} servers | ${chalk.yellow(`Spark v${this.version}`)}\nWe detected the following data:\n \n ${commandtext} ${observertext} ${enginetext} ${snippettext} ${permissiontext} ${eventtext}`)
             }
 
         }
