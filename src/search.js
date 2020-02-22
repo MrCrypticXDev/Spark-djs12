@@ -78,7 +78,7 @@ module.exports.SearchLoader = class SearchLoader {
             return console.error("An error occurred while searching directories.", err)
         }
         var jsFiles = files.filter(i => {
-            return i.endsWith(".js")
+            return (i.endsWith(".js") || i.endsWith('.ts'))
         })
         jsFiles = jsFiles.map(i => (resolve(location, i)))
         if (!files) {
