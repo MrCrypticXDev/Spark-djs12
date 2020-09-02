@@ -36,7 +36,7 @@ module.exports = (client) => {
 
     client.on("message", (message) => {
         var p = client.config.prefix
-        if (message.channel.type == "text" && client.customConfig.has(message.guild.id) && client.customConfig.get(message.guild.id).prefix) {
+        if (['text', 'news'].includes(message.channel.type) && client.customConfig.has(message.guild.id) && client.customConfig.get(message.guild.id).prefix) {
             p = client.customConfig.get(message.guild.id).prefix
         }
         if (typeof p == "string") {
@@ -49,7 +49,7 @@ module.exports = (client) => {
                 if (client.config.disabled.has("commands", command.name)) {
                     return
                 }
-                if (message.channel.type == "text") {
+                if (['text', 'news'].includes(message.channel.type)) {
                     if (client.customConfig.get(message.guild.id).disabled.has("commands", command.name)) {
                         return
                     }
@@ -71,7 +71,7 @@ module.exports = (client) => {
 async function observer(client, message, command) {
     var results = null;
     var {ignoreBots} = client.config
-    if (message.channel.type == "text") {
+    if (['text', 'news'].includes(message.channel.type)) {
         if (message.guild.customConfig.ignoreBots) {
             ignoreBots = message.guild.customConfig;
         }
@@ -85,7 +85,7 @@ async function observer(client, message, command) {
                     return (i.observer.type == "all" || i.observer.type == "command")
                 })
                 .filter(i => (client.config.disabled.has("observers", i.observer.name) == false))
-            if (message.channel.type == "text") {
+            if (['text', 'news'].includes(message.channel.type)) {
                 results = results.filter(i => client.customConfig.get(message.guild.id).disabled.has("observers", i.observer.name) == false)
             }
             results = results.map(i => (i.observer.code(client, message)))
@@ -112,7 +112,7 @@ async function observer(client, message, command) {
                     return (i.observer.type == "all" || i.observer.type == "message")
                 })
                 .filter(i => (client.config.disabled.has("observers", i.observer.name) == false))
-            if (message.channel.type == "text") {
+            if (['text', 'news'].includes(message.channel.type)) {
                 results = results.filter(i => client.customConfig.get(message.guild.id).disabled.has("observers", i.observer.name) == false)
             }
 
@@ -130,7 +130,7 @@ async function isValidCommand(client, message, commandName) {
                 return i.permission.level == command.level
             })
             .filter(i => client.config.disabled.has("permissions", i.permission.name) == false)
-        if (message.channel.type == "text") {
+        if (['text', 'news'].includes(message.channel.type)) {
             permissions = permissions.filter(i => client.customConfig.get(message.guild.id).disabled.has("permissions", i.permission.name) == false)
         }
         if (permissions.size == 0) {
@@ -184,7 +184,7 @@ function executeCommand(client, message, commandName) {
     try {
         if (message.channel.type == "dm" && command.dms) {
             command.code(client, message)
-        } else if (message.channel.type == "text") {
+        } else if (['text', 'news'].includes(message.channel.type)) {
             command.code(client, message)
         }
     } catch (e) {
