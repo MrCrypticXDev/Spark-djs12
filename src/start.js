@@ -255,3 +255,16 @@ function executeCommandOld(client, message, commandName) {
     }
 
 }
+
+function executeCommand(client, interaction) {
+    var {
+        command,
+        location
+    } = client.dataStore.commands.get(interaction.data.name)
+    try {
+        command.code(client, message)
+    } catch (e) {
+        console.error(location + " | An error occured while executing the command.\n" + e)
+    }
+
+}
