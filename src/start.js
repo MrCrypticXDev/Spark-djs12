@@ -36,7 +36,7 @@ module.exports = (client) => {
 
     client.on("message", (message) => {
         var p = client.config.prefix
-        if (['text', 'news'].includes(message.channel.type) && client.customConfig.has(message.guild.id) && client.customConfig.get(message.guild.id).prefix) {
+        if (message.guild && client.customConfig.has(message.guild.id) && client.customConfig.get(message.guild.id).prefix) {
             p = client.customConfig.get(message.guild.id).prefix
         }
         if (typeof p == "string") {
@@ -49,7 +49,7 @@ module.exports = (client) => {
                 if (client.config.disabled.has("commands", command.name)) {
                     return
                 }
-                if (['text', 'news'].includes(message.channel.type)) {
+                if (message.guild) {
                     if (client.customConfig.get(message.guild.id).disabled.has("commands", command.name)) {
                         return
                     }
@@ -66,12 +66,23 @@ module.exports = (client) => {
             }
         })
     })
+
+    client.ws.on("INTERACTION_CREATE", interaction => {
+        var command = await isValidCommand(client, interaction)
+        if (client.config.disabled.has("commands", command.name)) return
+
+        if (client.customConfig.get(interaction.guild_id).disabled.has("commands", command.name)) return
+
+        if (command.value == true)
+            executeCommand(client, message, command.name)
+
+    })
 }
 
 async function observer(client, message, command) {
     var results = null;
     var {ignoreBots} = client.config
-    if (['text', 'news'].includes(message.channel.type)) {
+    if (message.guild) {
         if (message.guild.customConfig.ignoreBots) {
             ignoreBots = message.guild.customConfig;
         }
@@ -85,7 +96,7 @@ async function observer(client, message, command) {
                     return (i.observer.type == "all" || i.observer.type == "command")
                 })
                 .filter(i => (client.config.disabled.has("observers", i.observer.name) == false))
-            if (['text', 'news'].includes(message.channel.type)) {
+            if (message.guild) {
                 results = results.filter(i => client.customConfig.get(message.guild.id).disabled.has("observers", i.observer.name) == false)
             }
             results = results.map(i => (i.observer.code(client, message)))
@@ -112,7 +123,7 @@ async function observer(client, message, command) {
                     return (i.observer.type == "all" || i.observer.type == "message")
                 })
                 .filter(i => (client.config.disabled.has("observers", i.observer.name) == false))
-            if (['text', 'news'].includes(message.channel.type)) {
+            if (message.guild) {
                 results = results.filter(i => client.customConfig.get(message.guild.id).disabled.has("observers", i.observer.name) == false)
             }
 
@@ -123,14 +134,14 @@ async function observer(client, message, command) {
     }
 }
 
-async function isValidCommand(client, message, commandName) {
+async function isValidCommandOld(client, message, commandName) {
     if (client.dataStore.commands.has(commandName)) {
         var {command} = client.dataStore.commands.get(commandName)
         var permissions = client.dataStore.permissions.filter(i => {
                 return i.permission.level == command.level
             })
             .filter(i => client.config.disabled.has("permissions", i.permission.name) == false)
-        if (['text', 'news'].includes(message.channel.type)) {
+        if (message.guild) {
             permissions = permissions.filter(i => client.customConfig.get(message.guild.id).disabled.has("permissions", i.permission.name) == false)
         }
         if (permissions.size == 0) {
@@ -141,7 +152,7 @@ async function isValidCommand(client, message, commandName) {
         }
         var results = permissions.map(async i => {
             var {permission} = i
-            var result = await permission.code(client, message)
+            var result = await permission.code(client, null, message)
             if (typeof result != "boolean") {
                 console.log(Chalk.red("Error | ") + "Permission " + Chalk.yellow(permission.name) + " is not returning the correct value, please read " + Chalk.blue("https://discordspark.com/docs/permissions") + " for more information.")
                 return {
@@ -165,7 +176,7 @@ async function isValidCommand(client, message, commandName) {
         };
     }
     if (client.dataStore.aliases.has(commandName)) {
-        return isValidCommand(client, message, client.dataStore.aliases.get(commandName))
+        return isValidCommandOld(client, message, client.dataStore.aliases.get(commandName))
 
     }
     return {
@@ -176,7 +187,59 @@ async function isValidCommand(client, message, commandName) {
 
 }
 
-function executeCommand(client, message, commandName) {
+async function isValidCommand(client, interaction) {
+    const commandName = interaction.data.name
+    if (client.dataStore.commands.has(commandName)) {
+        var {command} = client.dataStore.commands.get(commandName)
+        var permissions = client.dataStore.permissions.filter(i => {
+                return i.permission.level == command.level
+            })
+            .filter(i => client.config.disabled.has("permissions", i.permission.name) == false)
+        permissions = permissions.filter(i => client.customConfig.get(interaction.guild_id).disabled.has("permissions", i.permission.name) == false)
+        if (permissions.size == 0) {
+            return {
+                value: false,
+                name: commandName
+            }
+        }
+        var results = permissions.map(async i => {
+            var {permission} = i
+            var result = await permission.code(client, interaction)
+            if (typeof result != "boolean") {
+                console.log(Chalk.red("Error | ") + "Permission " + Chalk.yellow(permission.name) + " is not returning the correct value, please read " + Chalk.blue("https://discordspark.com/docs/permissions") + " for more information.")
+                return {
+                    value: true,
+                    name: commandName
+                };
+            }
+            return result;
+
+        })
+        results = await Promise.all(results)
+        if (results.includes(true)) {
+            return {
+                value: false,
+                name: commandName
+            };
+        }
+        return {
+            value: true,
+            name: commandName
+        };
+    }
+    if (client.dataStore.aliases.has(commandName)) {
+        return isValidCommand(client, interaction, client.dataStore.aliases.get(commandName))
+
+    }
+    return {
+        value: false,
+        name: commandName
+    };
+
+
+}
+
+function executeCommandOld(client, message, commandName) {
     var {
         command,
         location
@@ -184,7 +247,7 @@ function executeCommand(client, message, commandName) {
     try {
         if (message.channel.type == "dm" && command.dms) {
             command.code(client, message)
-        } else if (['text', 'news'].includes(message.channel.type)) {
+        } else if (message.guild) {
             command.code(client, message)
         }
     } catch (e) {

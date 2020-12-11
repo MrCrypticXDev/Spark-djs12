@@ -1,5 +1,5 @@
 /* eslint prefer-destructuring: 0 */
-var Spark = require("../")
+var Spark = require("../app")
 const Command = Spark.command("help")
 
 Command.setLevel(0)
@@ -96,7 +96,7 @@ Command.code = async (client, message) => {
         levels = client.dataStore.permissions.filter(i => {
             return levels.includes(i.permission.level)
         }).map(async i => {
-            var result = await i.permission.code(client, message)
+            var result = await i.permission.code(client, null, message)
             return {
                 level: i.permission.level,
                 result

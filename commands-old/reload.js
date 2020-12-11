@@ -1,5 +1,5 @@
 /* eslint prefer-destructuring: 0 */
-var Spark = require("../")
+var Spark = require("../app")
 const Command = Spark.command("reload")
 
 Command.setLevel(10)

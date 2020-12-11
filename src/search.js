@@ -21,6 +21,7 @@ module.exports.SearchLoader = class SearchLoader {
             this.userLocations = this.searchLocations(dirname(require.main.filename))
         }
         this.loadCommands = require("./search_files/loadCommands.js")
+        this.loadCommandsOld = require("./search_files/loadCommandsOld.js")
         this.loadObserver = require("./search_files/loadObserver.js")
         this.loadEngines = require("./search_files/loadEngines.js")
         this.loadSnippets = require("./search_files/loadSnippet.js")
@@ -31,6 +32,7 @@ module.exports.SearchLoader = class SearchLoader {
     searchLocations(location) {
         return {
             "commands": resolve(location, "commands"),
+            "commandsOld": resolve(location, "commands-old"),
             "functions": resolve(location, "functions"),
             "observers": resolve(location, "functions/observers"),
             "engines": resolve(location, "functions/engines"),
@@ -43,6 +45,7 @@ module.exports.SearchLoader = class SearchLoader {
     async loadAll(locations) {
         this.dataStore = {}
         await this.loadCommands(this, locations.commands)
+        await this.loadCommandsOld(this, locations.commandsOld)
         if (!(await fs.exists(locations.functions))) {
             await this.genFolder(locations.functions)
         }
