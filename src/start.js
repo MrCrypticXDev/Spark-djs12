@@ -67,7 +67,7 @@ module.exports = (client) => {
         })
     })
 
-    client.ws.on("INTERACTION_CREATE", interaction => {
+    client.ws.on("INTERACTION_CREATE", async interaction => {
         var command = await isValidCommand(client, interaction)
         if (client.config.disabled.has("commands", command.name)) return
 
