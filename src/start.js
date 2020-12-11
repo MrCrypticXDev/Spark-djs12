@@ -57,7 +57,7 @@ module.exports = (client) => {
                 if (command.value == true) {
                     prefixMatched = true
                     if (await observer(client, message, command.value)) {
-                        executeCommand(client, message, command.name)
+                        executeCommandOld(client, message, command.name)
                     }
                 }
 
@@ -74,7 +74,7 @@ module.exports = (client) => {
         if (client.customConfig.get(interaction.guild_id).disabled.has("commands", command.name)) return
 
         if (command.value == true)
-            executeCommand(client, message, command.name)
+            executeCommand(client, interaction)
 
     })
 }
