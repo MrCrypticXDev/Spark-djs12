@@ -3,7 +3,7 @@ var chalk = require("chalk")
 module.exports = (options) => {
     if (typeof options != "object") {
         return console.log(`You are trying to start without ${chalk.red("a starting object")}.\nPlease read this article:\n${chalk.blue("https://discordspark.com/documentation/intro")}`)
-    } else if (typeof options.token != "string") {
+    } else if (options.token && typeof options.token != "string") {
         return console.log(`You are trying to start without ${chalk.red("a valid token")}.\nPlease read this article:\n${chalk.blue("https://discordspark.com/documentation/intro")}`)
     }
     if (options.disabled == null) {
