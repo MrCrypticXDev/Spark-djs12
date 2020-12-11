@@ -262,7 +262,7 @@ function executeCommand(client, interaction) {
         location
     } = client.dataStore.commands.get(interaction.data.name)
     try {
-        command.code(client, message)
+        command.code(client, interaction)
     } catch (e) {
         console.error(location + " | An error occured while executing the command.\n" + e)
     }
