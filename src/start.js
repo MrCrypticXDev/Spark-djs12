@@ -45,7 +45,7 @@ module.exports = (client) => {
         var prefixMatched = false;
         p.forEach(async (i, n) => {
             if (message.content.startsWith(i)) {
-                var command = await isValidCommand(client, message, message.content.split(" ")[0].replace(i, "").toLowerCase())
+                var command = await isValidCommandOld(client, message, message.content.split(" ")[0].replace(i, "").toLowerCase())
                 if (client.config.disabled.has("commands", command.name)) {
                     return
                 }
