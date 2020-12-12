@@ -21,7 +21,7 @@ Command.code = async (client, message) => {
         reloadCommands();
         await reloadSearch();
         return edit.edit("Successfully reloaded all commands.");
-    } else if (arg === "commandsOld") {
+    } else if (arg === "commandsold") {
         edit = await message.channel.send("Reloading all old commands...");
         reloadCommandsOld();
         await reloadSearch();
@@ -53,20 +53,21 @@ Command.code = async (client, message) => {
         return edit.edit("Successfully reloaded all events.");
     } else if (![
             "commands",
-            "commandsOld",
+            "commandsold",
             "observers",
             "engines",
             "snippets",
             "permissions",
             "events"
         ].includes(arg)) {
-        return message.channel.send("Please enter a valid option! \nChoose between `commands`, `commandsOld`, `observers`, `engines`, `snippets`, `permissions`, or `events`.")
+        return message.channel.send("Please enter a valid option! \nChoose between `commands`, `commandsold`, `observers`, `engines`, `snippets`, `permissions`, or `events`.")
     }
 
     // Reload Functions
 
     function reloadAll() {
         reloadCommands()
+        reloadCommandsOld()
         reloadObservers()
         reloadEngines();
         reloadSnippets();
