@@ -1,4 +1,5 @@
-var Chalk = require("chalk")
+const Discord = require('discord.js')
+const Chalk = require("chalk")
 module.exports = (client) => {
     function engine() {
         client.dataStore.functions.engines.forEach(i => {
@@ -262,7 +263,9 @@ function executeCommand(client, interaction) {
         location
     } = client.dataStore.commands.get(interaction.data.name)
     try {
-        command.code(client, interaction)
+        const respond = data => client.api.interactions(interaction.id, interaction.token).callback.post({data})
+        const followup = new Discord.WebhookClient(client.config.applicationID, interaction.token)
+        command.code(client, interaction, respond, followup)
     } catch (e) {
         console.error(location + " | An error occured while executing the command.\n" + e)
     }

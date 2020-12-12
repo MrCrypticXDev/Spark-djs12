@@ -113,6 +113,7 @@ exports.start = function(options) {
             try {
                 var application = await Client.fetchApplication()
                 Client.config.ownerID = application.owner.id
+                Client.config.applicationID = application.id
             } catch (e) {
                 console.log(e)
                 throw Error("Couldn't fetch application, token may be a invalid / user token. ")
