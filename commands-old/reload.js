@@ -21,6 +21,11 @@ Command.code = async (client, message) => {
         reloadCommands();
         await reloadSearch();
         return edit.edit("Successfully reloaded all commands.");
+    } else if (arg === "commandsOld") {
+        edit = await message.channel.send("Reloading all old commands...");
+        reloadCommandsOld();
+        await reloadSearch();
+        return edit.edit("Successfully reloaded all old commands.");
     } else if (arg === "observers") {
         edit = await message.channel.send("Reloading all observers...");
         reloadObservers();
@@ -48,13 +53,14 @@ Command.code = async (client, message) => {
         return edit.edit("Successfully reloaded all events.");
     } else if (![
             "commands",
+            "commandsOld",
             "observers",
             "engines",
             "snippets",
             "permissions",
             "events"
         ].includes(arg)) {
-        return message.channel.send("Please enter a valid option! \nChoose between `commands`, `observers`, `engines`, `snippets`, `permissions`, or `events`.")
+        return message.channel.send("Please enter a valid option! \nChoose between `commands`, `commandsOld`, `observers`, `engines`, `snippets`, `permissions`, or `events`.")
     }
 
     // Reload Functions
@@ -79,6 +85,12 @@ Command.code = async (client, message) => {
     }
 
     function reloadCommands() {
+        client.dataStore.commands.forEach((commands) => {
+            delete require.cache[require.resolve(commands.location)];
+        })
+    }
+
+    function reloadCommandsOld() {
         client.dataStore.commands.forEach((commands) => {
             delete require.cache[require.resolve(commands.location)];
         })
