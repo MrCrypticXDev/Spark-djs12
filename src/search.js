@@ -110,6 +110,9 @@ module.exports.SearchLoader = class SearchLoader {
         u.commands.forEach((i, n) => {
             c.commands.set(n, i)
         })
+        u.commandsOld.forEach((i, n) => {
+            c.commandsOld.set(n, i)
+        })
         u.functions.observer.forEach((i, n) => {
             c.functions.observer.set(n, i)
         })
