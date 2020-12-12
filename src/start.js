@@ -135,8 +135,8 @@ async function observer(client, message, command) {
 }
 
 async function isValidCommandOld(client, message, commandName) {
-    if (client.dataStore.commands.has(commandName)) {
-        var {command} = client.dataStore.commands.get(commandName)
+    if (client.dataStore.commandsOld.has(commandName)) {
+        var {command} = client.dataStore.commandsOld.get(commandName)
         var permissions = client.dataStore.permissions.filter(i => {
                 return i.permission.level == command.level
             })
@@ -243,7 +243,7 @@ function executeCommandOld(client, message, commandName) {
     var {
         command,
         location
-    } = client.dataStore.commands.get(commandName)
+    } = client.dataStore.commandsOld.get(commandName)
     try {
         if (message.channel.type == "dm" && command.dms) {
             command.code(client, message)
