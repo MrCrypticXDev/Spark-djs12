@@ -92,6 +92,7 @@ exports.start = function(options) {
                     return chalk.green(text)
                 }
                 var commandtext = colours(`${this.dataStore.commands.size} commands\n`, this.dataStore.commands.size)
+                var commandoldtext = colours(`${this.dataStore.commandsOld.size} old commands\n`, this.dataStore.commandsOld.size)
                 var observertext = colours(`${this.dataStore.functions.observer.size} observers\n`, this.dataStore.functions.observer.size)
                 var enginetext = colours(`${this.dataStore.functions.engines.size} engines\n`, this.dataStore.functions.engines.size)
                 var snippettext = colours(`${this.dataStore.functions.snippet.size} snippets\n`, this.dataStore.functions.snippet.size)
@@ -99,7 +100,7 @@ exports.start = function(options) {
                 var eventtext = colours(`${this.dataStore.events.size} events\n`, this.dataStore.events.size)
                 startBot(this)
 
-                console.log(`Your bot (${chalk.yellow(this.user.tag)}) is now ${chalk.green("online!")} | Running on ${this.guilds.cache.size} servers | ${chalk.yellow(`Spark v${this.version}`)}\nWe detected the following data:\n \n ${commandtext} ${observertext} ${enginetext} ${snippettext} ${permissiontext} ${eventtext}`)
+                console.log(`Your bot (${chalk.yellow(this.user.tag)}) is now ${chalk.green("online!")} | Running on ${this.guilds.cache.size} servers | ${chalk.yellow(`Spark v${this.version}`)}\nWe detected the following data:\n \n ${commandtext} ${commandoldtext} ${observertext} ${enginetext} ${snippettext} ${permissiontext} ${eventtext}`)
             }
 
         }
