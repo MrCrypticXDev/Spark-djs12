@@ -69,10 +69,10 @@ module.exports = (client) => {
     })
 
     client.ws.on("INTERACTION_CREATE", async interaction => {
-        var command = await isValidCommand(client, interaction)
+        const command = await isValidCommand(client, interaction)
         if (client.config.disabled.has("commands", command.name)) return
 
-        if (client.customConfig.get(interaction.guild_id).disabled.has("commands", command.name)) return
+        if (interaction.guild_id && client.customConfig.get(interaction.guild_id).disabled.has("commands", command.name)) return
 
         if (command.value == true)
             executeCommand(client, interaction)
@@ -196,7 +196,9 @@ async function isValidCommand(client, interaction) {
                 return i.permission.level == command.level
             })
             .filter(i => client.config.disabled.has("permissions", i.permission.name) == false)
-        permissions = permissions.filter(i => client.customConfig.get(interaction.guild_id).disabled.has("permissions", i.permission.name) == false)
+        if (interaction.guild_id) {
+            permissions = permissions.filter(i => client.customConfig.get(interaction.guild_id).disabled.has("permissions", i.permission.name) == false)
+        }
         if (permissions.size == 0) {
             return {
                 value: false,
