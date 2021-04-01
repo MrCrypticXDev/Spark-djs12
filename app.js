@@ -110,7 +110,7 @@ exports.start = function(options) {
         Client.config = options
         Client.login(options.token).then(async () => {
             try {
-                var application = await Client.fetchApplication()
+                var application = await Client.application ? Client.application.fetch() : Client.fetchApplication()
                 Client.config.ownerID = application.owner.id
             } catch (e) {
                 console.log(e)
