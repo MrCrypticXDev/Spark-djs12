@@ -248,13 +248,16 @@ function executeCommandOld(client, message, commandName) {
         location
     } = client.dataStore.commandsOld.get(commandName)
     try {
-        if (message.channel.type == "dm" && command.dms) {
-            command.code(client, message)
-        } else if (message.guild) {
-            command.code(client, message)
+        if (message.guild || message.channel.type === "dm" && command.dms) {
+            command.code(client, message)?.catch(e => {
+                console.error(`${location} | An error occurred while executing the command.`)
+                console.error(e)
+                message.channel.send(`An error occurred while executing the command.\n${e}`)
+            })
         }
     } catch (e) {
-        console.error(location + " | An error occured while executing the command.\n" + e)
+        console.error(`${location} | An error occurred while executing the command.`)
+        console.error(e)
     }
 
 }
@@ -267,9 +270,14 @@ function executeCommand(client, interaction) {
     try {
         const respond = data => client.api.interactions(interaction.id, interaction.token).callback.post({data})
         const followup = new Discord.WebhookClient(client.config.applicationID, interaction.token)
-        command.code(client, interaction, respond, followup)
+        command.code(client, interaction, respond, followup)?.catch(e => {
+            console.error(`${location} | An error occurred while executing the command.`)
+            console.error(e)
+            followup.send(`An error occurred while executing the command.\n${e}`)
+        })
     } catch (e) {
-        console.error(location + " | An error occured while executing the command.\n" + e)
+        console.error(`${location} | An error occurred while executing the command.`)
+        console.error(e)
     }
 
 }
