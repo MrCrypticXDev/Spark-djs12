@@ -182,13 +182,16 @@ function executeCommand(client, message, commandName) {
         location
     } = client.dataStore.commands.get(commandName)
     try {
-        if (message.channel.type == "dm" && command.dms) {
-            command.code(client, message)
-        } else if (['text', 'news'].includes(message.channel.type)) {
-            command.code(client, message)
+        if (message.guild || message.channel.type === "dm" && command.dms) {
+            command.code(client, message)?.catch(e => {
+                console.error(`${location} | An error occurred while executing the command.`)
+                console.error(e)
+                message.channel.send(`An error occurred while executing the command.\n${e}`)
+            })
         }
     } catch (e) {
-        console.error(location + " | An error occured while executing the command.\n" + e)
+        console.error(`${location} | An error occurred while executing the command.`)
+        console.error(e)
     }
 
 }
