@@ -1,5 +1,7 @@
 const Discord = require('discord.js')
 const Chalk = require("chalk")
+
+/** @param {Discord.Client} client */
 module.exports = (client) => {
     function engine() {
         client.dataStore.functions.engines.forEach(i => {
@@ -68,15 +70,16 @@ module.exports = (client) => {
         })
     })
 
-    client.ws.on("INTERACTION_CREATE", async interaction => {
+    client.on('interaction', async interaction => {
+        if (!interaction.isCommand()) return
+
         const command = await isValidCommand(client, interaction)
         if (client.config.disabled.has("commands", command.name)) return
 
-        if (interaction.guild_id && client.customConfig.get(interaction.guild_id).disabled.has("commands", command.name)) return
+        if (interaction.guildID && client.customConfig.get(interaction.guildID).disabled.has("commands", command.name)) return
 
         if (command.value == true)
             executeCommand(client, interaction)
-
     })
 }
 
@@ -188,16 +191,20 @@ async function isValidCommandOld(client, message, commandName) {
 
 }
 
+/**
+ * @param {Discord.Client} client 
+ * @param {Discord.CommandInteraction} interaction 
+ */
 async function isValidCommand(client, interaction) {
-    const commandName = interaction.data.name
+    const {commandName} = interaction
     if (client.dataStore.commands.has(commandName)) {
         var {command} = client.dataStore.commands.get(commandName)
         var permissions = client.dataStore.permissions.filter(i => {
                 return i.permission.level == command.level
             })
             .filter(i => client.config.disabled.has("permissions", i.permission.name) == false)
-        if (interaction.guild_id) {
-            permissions = permissions.filter(i => client.customConfig.get(interaction.guild_id).disabled.has("permissions", i.permission.name) == false)
+        if (interaction.guildID) {
+            permissions = permissions.filter(i => client.customConfig.get(interaction.guildID).disabled.has("permissions", i.permission.name) == false)
         }
         if (permissions.size == 0) {
             return {
@@ -262,18 +269,22 @@ function executeCommandOld(client, message, commandName) {
 
 }
 
+/**
+ * @param {Discord.Client} client 
+ * @param {Discord.CommandInteraction} interaction 
+ */
 function executeCommand(client, interaction) {
     var {
         command,
         location
-    } = client.dataStore.commands.get(interaction.data.name)
+    } = client.dataStore.commands.get(interaction.commandName)
     try {
-        const respond = data => client.api.interactions(interaction.id, interaction.token).callback.post({data})
-        const followup = new Discord.WebhookClient(client.config.applicationID, interaction.token)
-        command.code(client, interaction, respond, followup)?.catch(e => {
+        command.code(client, interaction)?.catch(e => {
             console.error(`${location} | An error occurred while executing the command.`)
             console.error(e)
-            followup.send(`An error occurred while executing the command.\n${e}`)
+            const msg = {content: `An error occurred while executing the command.\n${e}`, allowedMentions: {parse: []}}
+            interaction.deferred || interaction.replied ? interaction.followUp(msg) : interaction.reply(msg)
+                
         })
     } catch (e) {
         console.error(`${location} | An error occurred while executing the command.`)

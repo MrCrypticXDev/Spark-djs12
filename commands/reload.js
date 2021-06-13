@@ -1,5 +1,5 @@
 /*
-client.api.applications(client.config.applicationID).commands.post({data: {
+client.api.applications(client.application.id).commands.post({data: {
     name: 'reload',
     description: 'reload things - dev only',
     options: [{
@@ -25,50 +25,48 @@ const Command = Spark.command("reload")
 Command.setLevel(10)
 Command.setDescription("Reload modules in your bot without restarting it.")
 
-Command.code = async (client, interaction, respondFull, followup) => {
-    const respond = text => respondFull({type: 4, data: {content: text}})
-    const edit = text => client.api.webhooks(client.config.applicationID, interaction.token).messages('@original').patch({data: {content: text}})
-    const arg = interaction.data.options?.[0].value
-    if (!arg || arg == "all") {
-        await respond("Reloading all files...");
+Command.code = async (client, interaction) => {
+    const arg = interaction.options.get('filter')?.value
+    if (!arg || arg === "all") {
+        await interaction.reply("Reloading all files...");
         reloadAll();
         await reloadSearch();
-        return edit("Successfully reloaded all files.");
+        return interaction.editReply("Successfully reloaded all files.");
     } else if (arg === "commands") {
-        await respond("Reloading all commands...");
+        await interaction.reply("Reloading all commands...");
         reloadCommands();
         await reloadSearch();
-        return edit("Successfully reloaded all commands.");
+        return interaction.editReply("Successfully reloaded all commands.");
     } else if (arg === "commandsold") {
-        await respond("Reloading all old commands...");
+        await interaction.reply("Reloading all old commands...");
         reloadCommandsOld();
         await reloadSearch();
-        return edit("Successfully reloaded all old commands.");
+        return interaction.editReply("Successfully reloaded all old commands.");
     } else if (arg === "observers") {
-        await respond("Reloading all observers...");
+        await interaction.reply("Reloading all observers...");
         reloadObservers();
         await reloadSearch();
-        return edit("Successfully reloaded all observers.");
+        return interaction.editReply("Successfully reloaded all observers.");
     } else if (arg === "engines") {
-        await respond("Reloading all engines...");
+        await interaction.reply("Reloading all engines...");
         reloadEngines();
         await reloadSearch();
-        return edit("Successfully reloaded engines.");
+        return interaction.editReply("Successfully reloaded engines.");
     } else if (arg === "snippets") {
-        await respond("Reloading all snippets...");
+        await interaction.reply("Reloading all snippets...");
         reloadSnippets();
         await reloadSearch();
-        return edit("Successfully reloaded all snippets.");
+        return interaction.editReply("Successfully reloaded all snippets.");
     } else if (arg === "permissions") {
-        await respond("Reloading all permission files...");
+        await interaction.reply("Reloading all permission files...");
         reloadPermissions();
         await reloadSearch();
-        return edit("Successfully reloaded all permission files.");
+        return interaction.editReply("Successfully reloaded all permission files.");
     } else if (arg === "events") {
-        await respond("Reloading all events...");
+        await interaction.reply("Reloading all events...");
         reloadEvents();
         await reloadSearch();
-        return edit("Successfully reloaded all events.");
+        return interaction.editReply("Successfully reloaded all events.");
     } else if (![
             "commands",
             "commandsold",
@@ -78,7 +76,7 @@ Command.code = async (client, interaction, respondFull, followup) => {
             "permissions",
             "events"
         ].includes(arg)) {
-        return respond("Please enter a valid option! \nChoose between `commands`, `commandsold`, `observers`, `engines`, `snippets`, `permissions`, or `events`.")
+        return interaction.reply("Please enter a valid option! \nChoose between `commands`, `commandsold`, `observers`, `engines`, `snippets`, `permissions`, or `events`.")
     }
 
     // Reload Functions
@@ -99,7 +97,7 @@ Command.code = async (client, interaction, respondFull, followup) => {
             client.dataStore = temp
         } catch (e) {
             console.error(e);
-            followup.send("There was an error while reloading.")
+            interaction.followUp("There was an error while reloading.")
         }
     }
 

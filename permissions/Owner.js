@@ -7,7 +7,7 @@ Permission.code = (client, interaction, message) => {
         }
         return false;
     } else {
-        if (client.config.ownerID !== interaction.member.user.id) {
+        if (client.config.ownerID !== interaction.user.id) {
             return true
         }
         return false;

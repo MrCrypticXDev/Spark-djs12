@@ -1,5 +1,5 @@
 /*
-client.api.applications(client.config.applicationID).commands.post({data: {
+client.api.applications(client.application.id).commands.post({data: {
     name: 'ping',
     description: '🏓 Checks how fast the bot is responding'
 }})
@@ -13,11 +13,9 @@ Command.setLevel(0)
 Command.setDescription("Test the latency between Discord's servers and the bot.")
 
 Command.code = async (client, interaction, respond) => {
-    await respond({type: 4, data: {content: 'Ping!'}})
-    const interactionTimestamp = Discord.SnowflakeUtil.deconstruct(interaction.id).timestamp
-    const responseTimestamp = Discord.SnowflakeUtil.deconstruct(client.channels.cache.get(interaction.channel_id).lastMessageID).timestamp
-    const edit = text => client.api.webhooks(client.config.applicationID, interaction.token).messages('@original').patch({data: {content: text}})
-    edit(`Pong! | Took **${responseTimestamp - interactionTimestamp}**ms.`)
+    await interaction.defer()
+    const responseTimestamp = (await interaction.fetchReply()).createdTimestamp
+    interaction.editReply(`Pong! | Took **${responseTimestamp - interaction.createdTimestamp}**ms.`)
 }
 
 module.exports = Command
