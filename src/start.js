@@ -37,7 +37,7 @@ module.exports = (client) => {
     })
     engine()
 
-    client.on("message", (message) => {
+    client.on("messageCreate", (message) => {
         var p = client.config.prefix
         if (message.guild && client.customConfig.has(message.guild.id) && client.customConfig.get(message.guild.id).prefix) {
             p = client.customConfig.get(message.guild.id).prefix
@@ -70,7 +70,7 @@ module.exports = (client) => {
         })
     })
 
-    client.on('interaction', async interaction => {
+    client.on('interactionCreate', async interaction => {
         if (!interaction.isCommand()) return
 
         const command = await isValidCommand(client, interaction)
