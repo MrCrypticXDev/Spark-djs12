@@ -255,7 +255,7 @@ function executeCommandOld(client, message, commandName) {
         location
     } = client.dataStore.commandsOld.get(commandName)
     try {
-        if (message.guild || message.channel.type === "dm" && command.dms) {
+        if (message.guild || message.channel.type === "DM" && command.dms) {
             command.code(client, message)?.catch(e => {
                 console.error(`${location} | An error occurred while executing the command.`)
                 console.error(e)
