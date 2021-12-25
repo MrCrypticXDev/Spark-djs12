@@ -15,7 +15,8 @@ module.exports = async function(data, location) {
                 location: i
             })
         } catch (e) {
-            console.error(`${i} | Error while loading command: \n ${e}`)
+            console.error(`${i} | Error while loading command:`)
+            console.error(e)
         }
 
     })
