@@ -71,7 +71,8 @@ module.exports = (client) => {
     })
 
     client.on('interactionCreate', async interaction => {
-        if (!interaction.isCommand()) return
+        // isCommand is old, isChatInputCommand is new
+        if (interaction.isCommand && !interaction.isCommand() || interaction.isChatInputCommand && !interaction.isChatInputCommand()) return
 
         const command = await isValidCommand(client, interaction)
         if (client.config.disabled.has("commands", command.name)) return
@@ -255,7 +256,7 @@ function executeCommandOld(client, message, commandName) {
         location
     } = client.dataStore.commandsOld.get(commandName)
     try {
-        if (message.guild || (message.channel.isDM?.() || message.channel.type === "DM") && command.dms) {
+        if (message.guild || command.dms) {
             command.code(client, message)?.catch(e => {
                 console.error(`${location} | An error occurred while executing the command.`)
                 console.error(e)
