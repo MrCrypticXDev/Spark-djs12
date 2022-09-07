@@ -5,10 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "chalk": "^2.3.0",
-    "fs-extra": "^5.0.0",
-    "request": "latest",
-    "request-promise": "^4.2.2",
-    "socket.io-client": "^2.0.4"
+    "fs-extra": "^5.0.0"
   },
   "peerDependencies": {
     "discord.js": ">= 13.3.1"
