@@ -77,7 +77,7 @@ module.exports = (client) => {
         const command = await isValidCommand(client, interaction)
         if (client.config.disabled.has("commands", command.name)) return
 
-        if ((interaction.guildId || interaction.guildID) && client.customConfig.get(interaction.guildId || interaction.guildID).disabled.has("commands", command.name)) return
+        if ((interaction.guildId || interaction.guildID) && client.customConfig.get(interaction.guildId || interaction.guildID)?.disabled.has("commands", command.name)) return
 
         if (command.value == true)
             executeCommand(client, interaction)
@@ -205,7 +205,10 @@ async function isValidCommand(client, interaction) {
             })
             .filter(i => client.config.disabled.has("permissions", i.permission.name) == false)
         if (interaction.guildId || interaction.guildID) {
-            permissions = permissions.filter(i => client.customConfig.get(interaction.guildId || interaction.guildID).disabled.has("permissions", i.permission.name) == false)
+            const guildConfig = client.customConfig.get(interaction.guildId || interaction.guildID)
+            if (guildConfig) {
+                permissions = permissions.filter(i => guildConfig.disabled.has("permissions", i.permission.name) == false)
+            }
         }
         if (permissions.size == 0) {
             return {
